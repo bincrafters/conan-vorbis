@@ -1,45 +1,36 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from conans import ConanFile, tools, AutoToolsBuildEnvironment, MSBuild
-from conans.errors import ConanException
+from conans import ConanFile, tools, AutoToolsBuildEnvironment, MSBuild, CMake
 import os
 
 
 class VorbisConan(ConanFile):
     name = "vorbis"
-    version = "1.3.5"
+    version = "1.3.6"
     description = "The VORBIS audio codec library"
     url = "http://github.com/bincrafters/conan-vorbis"
     homepage = "https://xiph.org/vorbis/"
     license = "BSD"
-    exports = ["LICENSE.md", "FindVORBIS.cmake"]
-    source_subfolder = "sources"
+    exports = ["LICENSE.md"]
+    exports_sources = ["CMakeLists.txt", "FindVORBIS.cmake"]
+    source_subfolder = "source_subfolder"
     settings = "os", "arch", "build_type", "compiler"
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = "shared=False", "fPIC=True"
     requires = "ogg/1.3.3@bincrafters/stable"
+    generators = "cmake"
 
     def config_options(self):
         if self.settings.os == "Windows":
             self.options.remove("fPIC")
 
     def configure(self):
-        if self.settings.os == "Windows" and self.settings.compiler != "Visual Studio":
-            raise ConanException(
-                "On Windows, version 1.3.5 of the vorbis package only supports "
-                "the Visual Studio compiler for the time being."
-            )
-
         del self.settings.compiler.libcxx
 
     def source(self):
-        source_url = "http://downloads.xiph.org/releases"
-        archive_name = "lib" + self.name + "-" + self.version
-        tools.get("{url}/{libname}/{archive_name}.tar.gz".format(
-            url=source_url, libname=self.name, archive_name=archive_name)
-        )
-        os.rename(archive_name, self.source_subfolder)
+        tools.get("https://github.com/xiph/vorbis/archive/v%s.tar.gz" % self.version)
+        os.rename("vorbis-%s" % self.version, self.source_subfolder)
 
     def build_with_visual_studio(self):
 
@@ -98,24 +89,34 @@ class VorbisConan(ConanFile):
     def build(self):
         if self.settings.compiler == "Visual Studio":
             self.build_with_visual_studio()
+        elif self.settings.os =="Windows": #MinGW
+            cmake = CMake(self)
+            cmake.configure()
+            cmake.build()
         else:
             self.build_with_autotools()
 
     def package(self):
-        self.copy("FindOGG.cmake")
-        self.copy("COPYING", src=self.source_subfolder, dst="licenses", keep_path=False)
-        self.copy("LICENSE.md", dst="licenses", keep_path=False)
+        self.copy("FindVORBIS.cmake", ".", ".")
+        self.copy("include/vorbis/*", ".", "%s" % (self.source_subfolder), keep_path=True)
+        self.copy("%s/copying*" % self.source_subfolder, dst="licenses",  ignore_case=True, keep_path=False)
 
         if self.settings.compiler == "Visual Studio":
-            # Visual Studio build is not installing installing any artifact.
-            # Packaging needs to be done.
-            src_include_dir = os.path.join(self.source_subfolder, "include")
-            self.copy("*.h", dst="include", src=src_include_dir, keep_path=True)
-            self.copy(pattern="*.pdb", dst="bin", keep_path=False)
-            self.copy(pattern="*.lib", dst="lib", keep_path=False)
-
             if self.options.shared:
                 self.copy(pattern="*.dll", dst="bin", keep_path=False)
+            self.copy(pattern="*.pdb", dst="bin", keep_path=False)
+            self.copy(pattern="*.lib", dst="lib", keep_path=False)
+        else:
+            if self.options.shared:
+                if self.settings.os == "Macos":
+                    self.copy(pattern="*.dylib", dst="lib", keep_path=False)
+                elif self.settings.os == "Windows":
+                    self.copy(pattern="*.dll.a", dst="lib", keep_path=False)
+                    self.copy(pattern="*.dll", dst="bin", keep_path=False)
+                else:
+                    self.copy(pattern="*.so*", dst="lib", keep_path=False)
+            else:
+                self.copy(pattern="*.a", dst="lib", keep_path=False)
 
     def package_info(self):
         if self.settings.compiler == "Visual Studio":
