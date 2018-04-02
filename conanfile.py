@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from conans import ConanFile, tools, AutoToolsBuildEnvironment, MSBuild, CMake
+from conans import ConanFile, tools, CMake
 import os
 
 
@@ -32,69 +32,13 @@ class VorbisConan(ConanFile):
         tools.get("https://github.com/xiph/vorbis/archive/v%s.tar.gz" % self.version)
         os.rename("vorbis-%s" % self.version, self.source_subfolder)
 
-    def build_with_visual_studio(self):
-
-        def update_projects_in_solution(solution_folder, shared):
-            """
-            Update vs projects in solution_folder to build with ogg dependency from conan
-            :param solution_folder: solution folder
-            :param shared: True or False
-            :returns solution filename
-            """
-            suffix = "_dynamic" if shared else "_static"
-
-            for project in ["vorbisenc", "vorbisdec", "libvorbis", "libvorbisfile"]:
-                filename = project + suffix + ".vcxproj"
-                path = os.path.join(solution_folder, project, filename)
-                libdirs = "<AdditionalLibraryDirectories>"
-                libdirs_ext = "<AdditionalLibraryDirectories>$(LIB);"
-
-                updated_content = tools \
-                    .load(path) \
-                    .replace("libogg.lib", "ogg.lib") \
-                    .replace("libogg_static.lib", "ogg.lib") \
-                    .replace(libdirs, libdirs_ext)
-
-                tools.save(path, updated_content)
-
-            return "vorbis" + suffix + ".sln"
-
-        sln_folder = os.path.join(self.source_subfolder, "win32", "VS2010")
-        sln_filename = update_projects_in_solution(sln_folder, self.options.shared)
-
-        with tools.chdir(sln_folder):
-            msbuild = MSBuild(self)
-            msbuild.build(sln_filename, platforms={"x86": "Win32"})
-
-    def build_with_autotools(self):
-        env = AutoToolsBuildEnvironment(self)
-
-        with tools.chdir(self.source_subfolder):
-            with tools.environment_append(env.vars):
-
-                if self.settings.compiler == "clang" and self.settings.arch == "x86":
-                    # http://lists.llvm.org/pipermail/llvm-bugs/2015-November/043264.html
-                    tools.replace_in_file("configure", " -mno-ieee-fp ", " ")
-
-                configure_args = ["--prefix=%s" % self.package_folder]
-
-                if self.options.shared:
-                    configure_args.extend(["--disable-static", "--enable-shared"])
-                else:
-                    configure_args.extend(["--disable-shared", "--enable-static"])
-                env.configure(args=configure_args)
-                env.make()
-                env.make(args=["install"])
 
     def build(self):
-        if self.settings.compiler == "Visual Studio":
-            self.build_with_visual_studio()
-        elif self.settings.os =="Windows": #MinGW
-            cmake = CMake(self)
-            cmake.configure()
-            cmake.build()
-        else:
-            self.build_with_autotools()
+        cmake = CMake(self)
+        if self.settings.os != "Windows":
+            cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = self.options.fPIC
+        cmake.configure()
+        cmake.build()
 
     def package(self):
         self.copy("FindVORBIS.cmake", ".", ".")
