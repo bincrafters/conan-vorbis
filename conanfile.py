@@ -63,14 +63,11 @@ class VorbisConan(ConanFile):
                 self.copy(pattern="*.a", dst="lib", keep_path=False)
 
     def package_info(self):
-        if self.settings.compiler == "Visual Studio":
-            self.cpp_info.libs = ['libvorbis', 'libvorbisfile']
-#            if not self.options.shared:
-#                self.cpp_info.exelinkflags.append('-NODEFAULTLIB:LIBCMTD')
-#                self.cpp_info.exelinkflags.append('-NODEFAULTLIB:LIBCMT')
-        else:
-            self.cpp_info.libs = ['vorbisfile', 'vorbisenc', 'vorbis']
 
-        if self.settings.os == "Linux" and not self.options.shared:
+        self.cpp_info.libs = ['vorbisfile', 'vorbisenc', 'vorbis']
+
+        if self.settings.os == "Linux" and (not self.options.shared or\
+                                            (self.settings.compiler=="gcc" and\
+                                             self.settings.compiler.version=="4.9")):
             self.cpp_info.libs.insert(0, "m")
 
