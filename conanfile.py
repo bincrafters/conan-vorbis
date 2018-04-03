@@ -75,6 +75,6 @@ class VorbisConan(ConanFile):
 
         if self.settings.os == "Linux" and (not self.options.shared or\
                                             (self.settings.compiler=="gcc" and\
-                                             self.options.compiler.version=="4.9")):
+                                             self.settings.compiler.version=="4.9")):
             self.cpp_info.libs.append("m")
 
