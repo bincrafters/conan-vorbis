@@ -64,12 +64,10 @@ class VorbisConan(ConanFile):
 
     def package_info(self):
         if self.settings.compiler == "Visual Studio":
-            if self.options.shared:
-                self.cpp_info.libs = ['libvorbis', 'libvorbisfile']
-            else:
-                self.cpp_info.libs = ['libvorbis_static', 'libvorbisfile_static']
-                self.cpp_info.exelinkflags.append('-NODEFAULTLIB:LIBCMTD')
-                self.cpp_info.exelinkflags.append('-NODEFAULTLIB:LIBCMT')
+            self.cpp_info.libs = ['libvorbis', 'libvorbisfile']
+#            if not self.options.shared:
+#                self.cpp_info.exelinkflags.append('-NODEFAULTLIB:LIBCMTD')
+#                self.cpp_info.exelinkflags.append('-NODEFAULTLIB:LIBCMT')
         else:
             self.cpp_info.libs = ['vorbisfile', 'vorbisenc', 'vorbis']
 
