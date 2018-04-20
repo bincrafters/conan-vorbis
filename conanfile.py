@@ -32,7 +32,6 @@ class VorbisConan(ConanFile):
         tools.get("https://github.com/xiph/vorbis/archive/v%s.tar.gz" % self.version)
         os.rename("vorbis-%s" % self.version, self.source_subfolder)
 
-
     def build(self):
         cmake = CMake(self)
         if self.settings.os != "Windows":
@@ -66,5 +65,5 @@ class VorbisConan(ConanFile):
 
         self.cpp_info.libs = ['vorbisfile', 'vorbisenc', 'vorbis']
 
-        if self.settings.os == "Linux" and not self.options.shared:
+        if self.settings.os == "Linux":
             self.cpp_info.libs.append("m")
