@@ -33,6 +33,11 @@ class VorbisConan(ConanFile):
         os.rename("vorbis-%s" % self.version, self.source_subfolder)
 
     def build(self):
+        if self.settings.os == "Linux":
+            if 'LDFLAGS' in os.environ:
+                os.environ['LDFLAGS'] = os.environ['LDFLAGS'] + ' -lm'
+            else:
+                os.environ['LDFLAGS'] = '-lm'
         cmake = CMake(self)
         if self.settings.os != "Windows":
             cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = self.options.fPIC
