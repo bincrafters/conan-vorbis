@@ -31,6 +31,9 @@ class VorbisConan(ConanFile):
     def source(self):
         tools.get("https://github.com/xiph/vorbis/archive/v%s.tar.gz" % self.version)
         os.rename("vorbis-%s" % self.version, self.source_subfolder)
+        if self.settings.os == 'Windows':
+            with tools.chdir(self.source_subfolder):
+                tools.replace_in_file('vorbis.pc.in', 'Libs.private: -lm', 'Libs.private:')
 
     def build(self):
         if self.settings.os == "Linux":
@@ -46,8 +49,9 @@ class VorbisConan(ConanFile):
 
     def package(self):
         self.copy("FindVORBIS.cmake", ".", ".")
-        self.copy("include/vorbis/*", ".", "%s" % (self.source_subfolder), keep_path=True)
+        self.copy("include/vorbis/*", ".", "%s" % self.source_subfolder, keep_path=True)
         self.copy("%s/copying*" % self.source_subfolder, dst="licenses",  ignore_case=True, keep_path=False)
+        self.copy('*.pc', src=self.source_subfolder, dst=os.path.join('lib', 'pkgconfig'), keep_path=False)
 
         if self.settings.compiler == "Visual Studio":
             if self.options.shared:
