@@ -31,6 +31,9 @@ class VorbisConan(ConanFile):
     def source(self):
         tools.get("https://github.com/xiph/vorbis/archive/v%s.tar.gz" % self.version)
         os.rename("vorbis-%s" % self.version, self.source_subfolder)
+        if self.settings.os == 'Windows':
+            with tools.chdir(self.source_subfolder):
+                tools.replace_in_file('vorbis.pc.in', 'Libs.private: -lm', 'Libs.private:')
 
     def build(self):
         if self.settings.os == "Linux":
