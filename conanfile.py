@@ -48,6 +48,7 @@ class VorbisConan(ConanFile):
         self.copy("FindVORBIS.cmake", ".", ".")
         self.copy("include/vorbis/*", ".", "%s" % self.source_subfolder, keep_path=True)
         self.copy("%s/copying*" % self.source_subfolder, dst="licenses",  ignore_case=True, keep_path=False)
+        self.copy('*.pc', src=self.source_subfolder, dst=os.path.join('lib', 'pkgconfig'), keep_path=False)
 
         if self.settings.compiler == "Visual Studio":
             if self.options.shared:
