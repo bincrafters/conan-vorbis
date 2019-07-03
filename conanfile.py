@@ -9,9 +9,11 @@ class VorbisConan(ConanFile):
     name = "vorbis"
     version = "1.3.6"
     description = "The VORBIS audio codec library"
+    topics = "conan", "vorbis", "audio", "codec",
     url = "http://github.com/bincrafters/conan-vorbis"
+    author = "bincrafters <bincrafters@gmail.com>"
     homepage = "https://xiph.org/vorbis/"
-    license = "BSD"
+    license = "BSD-3-Clause"
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt", "FindVORBIS.cmake"]
     _source_subfolder = "source_subfolder"
@@ -29,7 +31,8 @@ class VorbisConan(ConanFile):
         del self.settings.compiler.libcxx
 
     def source(self):
-        tools.get("https://github.com/xiph/vorbis/archive/v%s.tar.gz" % self.version)
+        url = 'https://github.com/xiph/vorbis/archive/v%s.tar.gz' % self.version
+        tools.get(url, sha256='43fc4bc34f13da15b8acfa72fd594678e214d1cab35fc51d3a54969a725464eb')
         os.rename("vorbis-%s" % self.version, self._source_subfolder)
         if self.settings.os == 'Windows':
             with tools.chdir(self._source_subfolder):
