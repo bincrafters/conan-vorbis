@@ -2,7 +2,7 @@
 
 | Bintray | Appveyor | Travis | 
 |---------|-----------|--------|
-|[![Download](https://api.bintray.com/packages/bincrafters/public-conan/vorbis%3Abincrafters/images/download.svg)](https://bintray.com/bincrafters/public-conan/vorbis%3Abincrafters/_latestVersion)|[![Build status](https://ci.appveyor.com/api/projects/status/sxs9n6vb8nqa92l5?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-vorbis)|[![Build Status](https://travis-ci.org/bincrafters/conan-vorbis.svg?branch=stable%2F1.3.5)](https://travis-ci.org/bincrafters/conan-vorbis)|
+|[![Download](https://api.bintray.com/packages/bincrafters/public-conan/vorbis%3Abincrafters/images/download.svg)](https://bintray.com/bincrafters/public-conan/vorbis%3Abincrafters/_latestVersion)|[![Build status](https://ci.appveyor.com/api/projects/status/sxs9n6vb8nqa92l5?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-vorbis)|[![Build Status](https://travis-ci.com/bincrafters/conan-vorbis.svg?branch=stable%2F1.3.5)](https://travis-ci.com/bincrafters/conan-vorbis)|
 
 ## Conan.io Information
 
