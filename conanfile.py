@@ -9,9 +9,9 @@ class VorbisConan(ConanFile):
     name = "vorbis"
     version = "1.3.6"
     description = "The VORBIS audio codec library"
-    topics = "conan", "vorbis", "audio", "codec",
+    topics = ("conan", "vorbis", "audio", "codec")
     url = "http://github.com/bincrafters/conan-vorbis"
-    author = "bincrafters <bincrafters@gmail.com>"
+    author = "Bincrafters <bincrafters@gmail.com>"
     homepage = "https://xiph.org/vorbis/"
     license = "BSD-3-Clause"
     exports = ["LICENSE.md"]
