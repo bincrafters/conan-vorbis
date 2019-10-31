@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from conans import ConanFile, tools, CMake
 import os
 
@@ -29,6 +26,7 @@ class VorbisConan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
+        del self.settings.compiler.cppstd
 
     def source(self):
         url = 'https://github.com/xiph/vorbis/archive/v%s.tar.gz' % self.version
