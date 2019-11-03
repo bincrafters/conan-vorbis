@@ -43,8 +43,6 @@ class VorbisConan(ConanFile):
             else:
                 os.environ['LDFLAGS'] = '-lm'
         cmake = CMake(self)
-        if self.settings.os != "Windows":
-            cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = self.options.fPIC
         cmake.configure()
         cmake.build()
 
