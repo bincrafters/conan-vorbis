@@ -1,6 +1,5 @@
 [![Download](https://api.bintray.com/packages/bincrafters/public-conan/vorbis%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/vorbis%3Abincrafters/_latestVersion)
 [![Build Status Travis](https://travis-ci.com/bincrafters/conan-vorbis.svg?branch=stable%2F1.3.6)](https://travis-ci.com/bincrafters/conan-vorbis)
-[![Build Status Azure](https://dev.azure.com/bincrafters/packages/_apis/build/status/bincrafters.conan-vorbis?branchName=stable%2F1.3.6)](https://dev.azure.com/bincrafters/packages/_build)
 [![Build Status AppVeyor](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-vorbis?branch=stable%2F1.3.6&svg=true)](https://ci.appveyor.com/project/bincrafters/conan-vorbis)
 
 ## Conan package recipe for [*vorbis*](https://xiph.org/vorbis/)
