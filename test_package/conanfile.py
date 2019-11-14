@@ -14,10 +14,6 @@ class TestPackageConan(ConanFile):
         cmake.build()
 
     def imports(self):
-        self.copy("*.dll", dst="bin", src="bin")
-        self.copy("*.dylib*", dst="bin", src="lib")
-        self.copy('*.so*', dst='bin', src='lib')
-
         test_package_dir = os.path.dirname(os.path.abspath(__file__))
         self.copy("sample.wav", src=test_package_dir, dst="bin")
 
@@ -34,8 +30,8 @@ class TestPackageConan(ConanFile):
                         )
                     except subprocess.CalledProcessError as e:
                         self.output.error(
-                            "Test Error!!! cmd: %s return code: %s output: %s" % (e.cmd, e.returncode, e.output)
+                            "Test Error! cmd: %s return code: %s output: %s" % (e.cmd, e.returncode, e.output)
                         )
                         sys.exit(e.returncode)
                     else:
-                        self.output.success("Test OK!!!")
+                        self.output.success("Test OK!")
