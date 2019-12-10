@@ -1,4 +1,4 @@
-from conans import ConanFile, CMake, tools
+from conans import ConanFile, CMake, tools, RunEnvironment
 import os
 import subprocess
 import sys
@@ -21,17 +21,19 @@ class TestPackageConan(ConanFile):
         with tools.chdir("bin"):
             with open("sample.wav", "rb") as input_file:
                 with open("sample.ogg", "wb") as output_file:
-                    try:
-                        subprocess.check_call(
-                            [".%stest_package" % os.sep],
-                            stdin=input_file,
-                            stdout=output_file,
-                            stderr=subprocess.STDOUT
-                        )
-                    except subprocess.CalledProcessError as e:
-                        self.output.error(
-                            "Test Error! cmd: %s return code: %s output: %s" % (e.cmd, e.returncode, e.output)
-                        )
-                        sys.exit(e.returncode)
-                    else:
-                        self.output.success("Test OK!")
+                    env_build = RunEnvironment(self)
+                    with tools.environment_append(env_build.vars):
+                        try:
+                            subprocess.check_call(
+                                [".%stest_package" % os.sep],
+                                stdin=input_file,
+                                stdout=output_file,
+                                stderr=subprocess.STDOUT
+                            )
+                        except subprocess.CalledProcessError as e:
+                            self.output.error(
+                                "Test Error! cmd: %s return code: %s output: %s" % (e.cmd, e.returncode, e.output)
+                            )
+                            sys.exit(e.returncode)
+                        else:
+                            self.output.success("Test OK!")
